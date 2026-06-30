@@ -24,7 +24,7 @@ const useAutoLogout = (logoutAction) => {
 
           // Redirect to login
           navigate('/login');
-        }, 30000); 
+        }, 300000); 
 
       } else if (document.visibilityState === 'visible') {
         

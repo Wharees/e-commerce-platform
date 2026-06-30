@@ -108,7 +108,7 @@ const RegisterPage = () => {
               value={formData.lasuEmail}
               onChange={handleChange}
               className="input-field"
-              placeholder="you@lasu.edu.ng"
+              placeholder="you@st.lasu.edu.ng"
               required
             />
           </div>

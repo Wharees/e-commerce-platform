@@ -1,9 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const { authenticate, isAdmin } = require('../middleware/authMiddleware');
+const { adminLogin } = require('../controllers/adminController'); 
+const { registerVendor } = require('../controllers/adminController');
 
-// Apply authentication to all admin routes
-router.use(authenticate, isAdmin);
+// ==========================================
+// 🟢 PUBLIC ROUTES (Must go BEFORE the middleware)
+// ==========================================
+
+// Admin Login Route
+router.post('/login', adminLogin);
+
+router.post('/register-vendor', registerVendor);
 
 // Dashboard analytics
 router.get('/dashboard', async (req, res) => {
@@ -38,6 +46,40 @@ router.get('/dashboard', async (req, res) => {
         recentActivities
       }
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ==========================================
+// 🔴 PROTECTED ROUTES (Requires Admin Token)
+// !
+router.use(authenticate, isAdmin);
+
+
+// Get pending payouts
+router.get('/payouts/pending', async (req, res) => {
+  try {
+    const Payout = require('../models/Payout'); // Assuming you have a Payout model
+    const pendingPayouts = await Payout.find({ status: 'pending' })
+      .populate('vendor', 'fullName email');
+    
+    res.status(200).json({ payouts: pendingPayouts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Approve a payout
+router.put('/payouts/:id/approve', async (req, res) => {
+  try {
+    const Payout = require('../models/Payout');
+    const payout = await Payout.findByIdAndUpdate(
+      req.params.id,
+      { status: 'paid' },
+      { new: true }
+    );
+    res.status(200).json({ message: 'Payout approved', payout });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

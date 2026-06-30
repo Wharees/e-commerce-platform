@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const path = require('path'); // <-- Moved this to the top with the others!
 
 const app = express();
-
+ 
 // ==================== SECURITY MIDDLEWARE ====================
 app.use(helmet());
 app.use(cors({
@@ -24,6 +24,7 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api/', limiter);
+
 
 // ==================== BODY PARSER ====================
 app.use(express.json({ limit: '10mb' }));

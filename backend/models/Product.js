@@ -20,8 +20,9 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Quantity is required'],
     min: [0, 'Quantity cannot be negative']
   },
-    category: { 
-    type: String, 
+  category: { 
+    type: mongoose.Schema.Types.ObjectId, // 👈 Fixed: Now links to Category model
+    ref: 'Category', 
     required: true 
   },
   vendor: {
@@ -68,16 +69,8 @@ const productSchema = new mongoose.Schema({
   discountPrice: {
     type: Number,
     default: null
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
   }
-}, { timestamps: true });
+}, { timestamps: true }); // 👈 This automatically creates and updates createdAt & updatedAt
 
 // Index for better query performance
 productSchema.index({ name: 'text', description: 'text', tags: 'text' });
@@ -94,7 +87,7 @@ productSchema.pre('save', function(next) {
   next();
 });
 
-// Populate vendor on query
+// Populate vendor and category on query
 productSchema.pre(/^find/, function(next) {
   if (this.options._recursed) {
     return next();

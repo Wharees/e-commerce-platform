@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Notification from './components/Notification';
 
+
 // Pages
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -25,6 +26,10 @@ import OrderDetailPage from './pages/OrderDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
 import useAutoLogout from './hooks/useAutoLogout';
 import CustomerMarketplace from './pages/CustomerMarketplace';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import AdminRoute from './components/AdminRoute'; // 👇 Import your new bouncer
+import AdminLogin from './pages/Admin/AdminLogin';
+import EscrowAndPayouts from './pages/Admin/EscrowAndPayouts';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole = null }) => {
@@ -69,6 +74,7 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/products" element={<ProductListPage />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
+            <Route path="/Admin/login" element={<AdminLogin />} />
 
             {/* Protected Customer Routes */}
             <Route
@@ -162,16 +168,11 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
-            {/* Protected Admin Routes */}
-            <Route
-              path="/admin/dashboard"
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <AdminDashboardPage />
-                </ProtectedRoute>
-              }
-            />
+                        {/* 🔴 STRICTLY PROTECTED ADMIN ROUTES */}
+              <Route element={<AdminRoute />}>
+                <Route path="/Admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/Admin/transactions" element={<EscrowAndPayouts/>} /> 
+              </Route>
 
             {/* 404 Route */}
             <Route path="*" element={<NotFoundPage />} />
